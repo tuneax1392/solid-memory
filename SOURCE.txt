@@ -1,0 +1,2 @@
+The source of the libsndfile library can be downloaded from
+http://www.mega-nerd.com/libsndfile/
