@@ -1,0 +1,53 @@
+{% set version = "0.13.10" %}
+
+package:
+  name: aws-c-io
+  version: {{ version }}
+
+source:
+  url: https://github.com/awslabs/aws-c-io/archive/v{{ version }}.tar.gz
+  sha256: 4e7caa335ece916c00f4c9896e7413bb6ed52abc77e2c3dda3ffe5bcf3fc8655
+
+build:
+  number: 0
+  run_exports:
+    - {{ pin_subpackage("aws-c-io", max_pin="x.x.x") }}
+  missing_dso_whitelist:  # [s390x]
+    - '$RPATH/ld64.so.1'  # [s390x]
+
+requirements:
+  build:
+    - cmake !=3.19.0,!=3.19.1
+    - {{ compiler('c') }}
+    - ninja-base
+  host:
+    - aws-c-common 0.8.5
+    - aws-c-cal 0.5.20
+    - s2n 1.3.27 # [linux]
+
+test:
+  commands:
+    - test -f $PREFIX/lib/libaws-c-io${SHLIB_EXT}  # [unix]
+    - test -f $PREFIX/include/aws/io/io.h  # [unix]
+    - if not exist %LIBRARY_INC%\\aws\\io\\io.h exit 1          # [win]
+    - if not exist %PREFIX%\\Library\\bin\\aws-c-io.dll exit 1  # [win]
+
+about:
+  home: https://github.com/awslabs/aws-c-io
+  license: Apache-2.0
+  license_family: Apache
+  license_file: LICENSE
+  summary: This is a module for the AWS SDK for C. It handles all IO and TLS work for application protocols.
+  description: |
+    This is an event driven framework for implementing application protocols. It is built on top of cross-platform 
+    abstractions that allow you as a developer to think only about the state machine and API for your protocols.
+    A typical use-case would be to write something like Http on top of asynchronous-io with TLS already baked in. 
+    All of the platform and security concerns are already handled for you.
+  dev_url: https://github.com/awslabs/aws-c-io
+  doc_url: https://github.com/awslabs/aws-c-io
+
+
+extra:
+  recipe-maintainers:
+    - xhochy
+    - conda-forge/aws-sdk-cpp
